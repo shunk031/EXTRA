@@ -6,6 +6,7 @@ authors = ["Shunsuke KITADA <shunsuke.kitada.0831@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
+tqdm = "^4.62.2"
 
 [tool.poetry.dev-dependencies]
 black = "^21.9b0"
