@@ -3,6 +3,8 @@ import gzip
 import pickle
 from datetime import datetime
 
+from tqdm import tqdm
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
@@ -22,7 +24,7 @@ def parse_args() -> argparse.Namespace:
 def format_amazon(raw_path: str, review_path: str) -> None:
 
     reviews = []
-    for line in gzip.open(raw_path, "r"):
+    for line in tqdm(gzip.open(raw_path, "r")):
         review = eval(line)
         text = ""
         if "summary" in review:
