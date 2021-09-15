@@ -1,6 +1,6 @@
 import argparse
 import gzip
-import pickle
+import json
 from datetime import datetime
 
 from tqdm import tqdm
@@ -16,16 +16,22 @@ def parse_args() -> argparse.Namespace:
         help="path to load raw reviews",
     )
     parser.add_argument(
-        "--review-path", type=str, default="reviews.pickle", help="path to save reviews"
+        "--review-path", type=str, default="reviews.jsonl", help="path to save reviews"
     )
     return parser.parse_args()
 
 
 def format_amazon(raw_path: str, review_path: str) -> None:
 
+    lines = []
+    with gzip.open(raw_path, "r") as rf:
+        for line in rf:
+            lines.append(line)
+
     reviews = []
-    for line in tqdm(gzip.open(raw_path, "r")):
+    for line in tqdm(lines, ncols=100):
         review = eval(line)
+
         text = ""
         if "summary" in review:
             summary = review["summary"]
@@ -43,7 +49,11 @@ def format_amazon(raw_path: str, review_path: str) -> None:
             ),
         }
         reviews.append(json_doc)
-    pickle.dump(reviews, open(review_path, "wb"))
+
+    with open(review_path, "w") as wf:
+        for review in reviews:
+            json.dump(review, wf)
+            wf.write("\n")
 
 
 def main() -> None:
