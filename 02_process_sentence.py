@@ -1,6 +1,7 @@
 import argparse
-import pickle
+import json
 import re
+from multiprocessing import Pool
 from typing import List, Tuple
 
 import nltk
@@ -23,6 +24,7 @@ def parser_args() -> argparse.Namespace:
         default="sentences.pickle",
         help="path to save sentences",
     )
+    parser.add_argument("--n-processes", type=int, default=8)
     return parser.parse_args()
 
 
@@ -32,27 +34,7 @@ def get_sentences(s: str) -> List[str]:
     return sentences
 
 
-def get_sentence_attr(
-    s: str, subj_words: List[str], noun_taggers: List[str], adj_taggers: List[str]
-) -> Tuple[int, int, int, int]:
-
-    subj_num = 0
-    noun_num = 0
-    adj_num = 0
-    words = s.lower().split()
-    w_t_list = nltk.pos_tag(words)
-
-    for (w, t) in w_t_list:
-        if w in subj_words:
-            subj_num += 1
-        if t in noun_taggers:
-            noun_num += 1
-        if t in adj_taggers:
-            adj_num += 1
-    return len(words), subj_num, noun_num, adj_num
-
-
-def process_sentence(review_path: str, sentence_path: str) -> None:
+def get_sentence_attr(s: str) -> Tuple[int, int, int, int]:
 
     subj_words = [
         "i",
@@ -69,37 +51,76 @@ def process_sentence(review_path: str, sentence_path: str) -> None:
     noun_taggers = ["NN", "NNP", "NNPS", "NNS"]
     adj_taggers = ["JJ", "JJR", "JJS"]
 
-    with open(review_path, "rb") as rf:
-        reviews = pickle.load(rf)
+    subj_num = 0
+    noun_num = 0
+    adj_num = 0
+    words = s.lower().split()
+    w_t_list = nltk.pos_tag(words)
+
+    for (w, t) in w_t_list:
+        if w in subj_words:
+            subj_num += 1
+        if t in noun_taggers:
+            noun_num += 1
+        if t in adj_taggers:
+            adj_num += 1
+
+    return len(words), subj_num, noun_num, adj_num
+
+
+def process_sentence_mp(idx_review):
+
+    idx, review = idx_review
+    text = review["text"]
+    exps = get_sentences(text)
 
     sentences = []
-    for idx, review in enumerate(tqdm(reviews, ncols=100)):
-        text = review["text"]
-        exps = get_sentences(text)
-        for exp in exps:
-            word_n, subj_n, noun_n, adj_n = get_sentence_attr(
-                exp,
-                subj_words=subj_words,
-                noun_taggers=noun_taggers,
-                adj_taggers=adj_taggers,
-            )
-            sentence = {
-                "review_idx": idx,
-                "exp": exp,
-                "word_num": word_n,
-                "subj_num": subj_n,
-                "noun_num": noun_n,
-                "adj_num": adj_n,
-            }
-            sentences.append(sentence)
 
-    with open(sentence_path, "wb") as wf:
-        pickle.dump(sentences, wf)
+    for exp in exps:
+        word_n, subj_n, noun_n, adj_n = get_sentence_attr(exp)
+
+        sentence = {
+            "review_idx": idx,
+            "exp": exp,
+            "word_num": word_n,
+            "subj_num": subj_n,
+            "noun_num": noun_n,
+            "adj_num": adj_n,
+        }
+
+        sentences.append(sentence)
+    return sentences
+
+
+def process_sentence(
+    review_path: str, sentence_path: str, n_processes: int = 8
+) -> None:
+
+    with open(review_path, "r") as rf:
+        reviews = [json.loads(line) for line in tqdm(rf)]
+
+    all_sentences = []
+    with Pool(processes=n_processes) as p:
+        with tqdm(total=len(reviews), ncols=100) as pbar:
+            iterator = p.imap(process_sentence_mp, enumerate(reviews))
+            for sentences in tqdm(iterator, ncols=100):
+                all_sentences.extend(sentences)
+                pbar.update()
+
+    with open(sentence_path, "w") as wf:
+        for sentence in all_sentences:
+            json.dump(sentence, wf)
+            wf.write("\n")
 
 
 def main() -> None:
     args = parser_args()
-    process_sentence(review_path=args.review_path, sentence_path=args.sentence_path)
+
+    process_sentence(
+        review_path=args.review_path,
+        sentence_path=args.sentence_path,
+        n_processes=args.n_processes,
+    )
 
 
 if __name__ == "__main__":
