@@ -9,16 +9,22 @@
 - Yelp 2019
 
 ## Data format
+
 - **IDs.pickle** can be loaded via the pickle package as a python list, where each record is a python dict in the form of
+
+```json
+{
+	'user': '7B555091EC0818119062CF726B9EF5FF',  # str
+	'item': '1068719',       # str
+	'rating': 5,             # int, not important to the ranking task
+	'time': '2017-05-06',    # str in the format of YYYY-MM-DD, not available on TripAdvisor
+	'exp_idx': ['34', '85'], # a list of str, they are the indices of explanations after sentence grouping via LSH
+	'oexp_idx': ['91', '15'] # a list of str, they are the indices of original sentences, corresponding to senID in the following
+}  
 ```
-{'user': '7B555091EC0818119062CF726B9EF5FF',  # str
-'item': '1068719',  # str
-'rating': 5,  # int, not important to the ranking task
-'time': '2017-05-06', # str in the format of YYYY-MM-DD, not available on TripAdvisor
-'exp_idx': ['34', '85'],  # a list of str, they are the indices of explanations after sentence grouping via LSH
-'oexp_idx': ['91', '15']}  # a list of str, they are the indices of original sentences, corresponding to senID in the following
-```
+
 - Open **id2exp.json** via a text editor, e.g., Sublime, if you are curious about what the explanation indices correspond to. Or you can load it via [testing.py](testing.py) by updating the parameters (line 5-7).
+
 ---
 - **IDs.txt** and **id2exp.txt** are compatible with **IDs.pickle** and **id2exp.json**. It would be easier to check the content with plain text files.
 - Each line in **IDs.txt** is in the format of ```userID::itemID::rating::timestamp::expID:expID::senID:senID```, where timestamp is not available on TripAdvisor, and expID/senID are separated by ":" when there are multiple explanations.
