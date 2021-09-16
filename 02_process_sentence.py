@@ -1,5 +1,6 @@
 import argparse
 import json
+import pathlib
 import re
 from multiprocessing import Pool
 from typing import List, Tuple
@@ -14,14 +15,14 @@ def parser_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--review-path",
-        type=str,
-        default="reviews.pickle",
+        type=pathlib.Path,
+        default=pathlib.Path(__file__).resolve() / "outputs" / "reviews.jsonl",
         help="resulting from format_amazon.py",
     )
     parser.add_argument(
         "--sentence-path",
-        type=str,
-        default="sentences.pickle",
+        type=pathlib.Path,
+        default=pathlib.Path(__file__).resolve() / "outputs" / "sentences.jsonl",
         help="path to save sentences",
     )
     parser.add_argument("--n-processes", type=int, default=8)
@@ -108,7 +109,7 @@ def process_sentence(
                 pbar.update()
 
     with open(sentence_path, "w") as wf:
-        for sentence in all_sentences:
+        for sentence in tqdm(all_sentences, ncols=100, desc="Save to jsonl"):
             json.dump(sentence, wf)
             wf.write("\n")
 
