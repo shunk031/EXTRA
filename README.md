@@ -36,10 +36,31 @@
 - **train.index**/**test.index** contain a line of numbers (indices), e.g., 5 8 9 10.
 
 ## Creation steps
+
 - Run the scripts in the following order:
-- Modify [format_amazon.py](format_amazon.py), including the path (line 6, 7), the keys (line 13, 14, 17, 19-23), and how you load and iterate over each review (line 10) if your data are stored in other data formats, such as JSON, Excel or TXT. Remove line 13-16, if your dataset has no summary or tip, which is meant to include as much textual data as possible. **This script is not limited to Amazon datasets. You can modify it to apply to other datasets**.
-- Update the paths (line 6, 7) in [process_sentence.py](process_sentence.py).
-- Update the parameters (line 6-10) in [group_sentence.py](group_sentence.py).
+
+```shell
+python 01_format_amazon.py \
+	--raw-path SIGIR21-EXTRA-Datasets/reviews_Movies_and_TV_5.json.gz \
+	--review-path outputs/reviews.jsonl
+```
+
+```shell
+python 02_process_sentence.py \
+	--review-path outputs/reviews.jsonl \
+	--sentence-path sentences.jsonl --n-processes 8
+```
+
+```shell
+python 03_group_sentence.py \
+	--sentence-path outputs/sentences.jsonl \
+	--directory outputs/ \
+	--sim-thresholds 0.9 \
+	--shingle-size 2 \
+	--group-size 5 \
+	--n-processes 8
+```
+
 - Update the paths (line 5-9) in [keep_valid.py](keep_valid.py).
 - Update the paths (line 6-9) in [movielens.py](movielens.py), if you want to process the data into the MovieLens format.
 
