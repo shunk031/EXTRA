@@ -13,7 +13,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--raw-path",
         type=pathlib.Path,
-        default=pathlib.Path(__file__).resolve()
+        default=pathlib.Path(__file__).parent.resolve()
         / "outputs"
         / "reviews_Movies_and_TV_5.json.gz",
         help="path to load raw reviews",
@@ -21,7 +21,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--review-path",
         type=pathlib.Path,
-        default=pathlib.Path(__file__).resolve() / "outputs" / "reviews.jsonl",
+        default=pathlib.Path(__file__).parent.resolve() / "outputs" / "reviews.jsonl",
         help="path to save reviews",
     )
     return parser.parse_args()

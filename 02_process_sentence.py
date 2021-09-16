@@ -16,13 +16,13 @@ def parser_args() -> argparse.Namespace:
     parser.add_argument(
         "--review-path",
         type=pathlib.Path,
-        default=pathlib.Path(__file__).resolve() / "outputs" / "reviews.jsonl",
+        default=pathlib.Path(__file__).parent.resolve() / "outputs" / "reviews.jsonl",
         help="resulting from format_amazon.py",
     )
     parser.add_argument(
         "--sentence-path",
         type=pathlib.Path,
-        default=pathlib.Path(__file__).resolve() / "outputs" / "sentences.jsonl",
+        default=pathlib.Path(__file__).parent.resolve() / "outputs" / "sentences.jsonl",
         help="path to save sentences",
     )
     parser.add_argument("--n-processes", type=int, default=8)
