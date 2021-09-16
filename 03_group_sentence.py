@@ -1,6 +1,8 @@
 import argparse
 import datetime
 import json
+import os
+import pathlib
 import pickle
 from functools import partial
 from multiprocessing import Pool
@@ -14,14 +16,14 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--sentence-path",
-        type=str,
-        default="sentences.pickle",
-        help="resulting from 02_process_sentence.py",
+        type=pathlib.Path,
+        default=pathlib.Path(__file__).resolve().parent / "outputs" / "sentences.jsonl",
+        help="resulting from `02_process_sentence.py`",
     )
     parser.add_argument(
         "--directory",
-        type=str,
-        default="./",
+        type=pathlib.Path,
+        default=pathlib.Path(__file__).resolve().parent / "outputs",
         help="directory to save the grouped sentence ids",
     )
     parser.add_argument(
@@ -41,9 +43,9 @@ def parse_args() -> argparse.Namespace:
         "--group-size",
         type=int,
         default=5,
-        help="minumum number of sentences in a group",
+        help="minimum number of sentences in a group",
     )
-    parser.add_argument("--n-processes", type=int, default=8)
+    parser.add_argument("--n-processes", type=int, default=os.cpu_count())
 
     return parser.parse_args()
 

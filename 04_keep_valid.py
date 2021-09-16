@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 import pathlib
 import pickle
 from multiprocessing import Pool
@@ -43,7 +44,7 @@ def parse_args() -> argparse.Namespace:
         default=pathlib.Path(__file__).parent.resolve() / "outputs" / "id2exp.json",
         help="path to save id2exp",
     )
-    parser.add_argument("--n-processes", type=int, default=8)
+    parser.add_argument("--n-processes", type=int, default=os.cpu_count())
     return parser.parse_args()
 
 

@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 import pathlib
 import re
 from multiprocessing import Pool
@@ -25,7 +26,7 @@ def parser_args() -> argparse.Namespace:
         default=pathlib.Path(__file__).parent.resolve() / "outputs" / "sentences.jsonl",
         help="path to save sentences",
     )
-    parser.add_argument("--n-processes", type=int, default=8)
+    parser.add_argument("--n-processes", type=int, default=os.cpu_count())
     return parser.parse_args()
 
 
