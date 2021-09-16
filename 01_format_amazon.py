@@ -1,6 +1,7 @@
 import argparse
 import gzip
 import json
+import pathlib
 from datetime import datetime
 
 from tqdm import tqdm
@@ -11,12 +12,17 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument(
         "--raw-path",
-        type=str,
-        default="reviews_Movies_and_TV_5.json.gz",
+        type=pathlib.Path,
+        default=pathlib.Path(__file__).resolve()
+        / "outputs"
+        / "reviews_Movies_and_TV_5.json.gz",
         help="path to load raw reviews",
     )
     parser.add_argument(
-        "--review-path", type=str, default="reviews.jsonl", help="path to save reviews"
+        "--review-path",
+        type=pathlib.Path,
+        default=pathlib.Path(__file__).resolve() / "outputs" / "reviews.jsonl",
+        help="path to save reviews",
     )
     return parser.parse_args()
 
