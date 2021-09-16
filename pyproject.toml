@@ -7,6 +7,8 @@ authors = ["Shunsuke KITADA <shunsuke.kitada.0831@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 tqdm = "^4.62.2"
+nltk = "^3.6.2"
+datasketch = "^1.5.3"
 
 [tool.poetry.dev-dependencies]
 black = "^21.9b0"
