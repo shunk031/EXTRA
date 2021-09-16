@@ -14,12 +14,12 @@
 
 ```json
 {
-	'user': '7B555091EC0818119062CF726B9EF5FF',  # str
-	'item': '1068719',       # str
-	'rating': 5,             # int, not important to the ranking task
-	'time': '2017-05-06',    # str in the format of YYYY-MM-DD, not available on TripAdvisor
-	'exp_idx': ['34', '85'], # a list of str, they are the indices of explanations after sentence grouping via LSH
-	'oexp_idx': ['91', '15'] # a list of str, they are the indices of original sentences, corresponding to senID in the following
+	"user": "7B555091EC0818119062CF726B9EF5FF",  # str
+	"item": "1068719",       # str
+	"rating": 5,             # int, not important to the ranking task
+	"time": "2017-05-06",    # str in the format of YYYY-MM-DD, not available on TripAdvisor
+	"exp_idx": ["34", "85"], # a list of str, they are the indices of explanations after sentence grouping via LSH
+	"oexp_idx": ["91", "15"] # a list of str, they are the indices of original sentences, corresponding to senID in the following
 }  
 ```
 
